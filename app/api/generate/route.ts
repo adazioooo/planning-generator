@@ -3,10 +3,11 @@ import Anthropic from '@anthropic-ai/sdk'
 import { SYSTEM_PROMPT } from '@/lib/config'
 import { GenerateRequest } from '@/types'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 export async function POST(req: NextRequest) {
   try {
+    // 요청 시점에 클라이언트 초기화 (환경변수 안정적으로 읽기)
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
     const body: GenerateRequest = await req.json()
     const { planningType, isAdmin, projectName, purpose, features, targets, dynValues, imageAnalysis, attachUrls } = body
 
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     ].filter(Boolean).join('\n')
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1200,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
